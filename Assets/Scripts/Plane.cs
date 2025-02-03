@@ -54,7 +54,8 @@ public class Plane : MonoBehaviour
 
    
     Rigidbody RB;
-     [Header("Plane Shoot Settings")]
+
+    [Header("Plane Shoot Settings")]
     [SerializeField] TextMeshProUGUI hud;
 
     [SerializeField] GameObject aimCam;
