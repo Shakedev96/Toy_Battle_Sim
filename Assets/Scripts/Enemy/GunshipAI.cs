@@ -8,16 +8,16 @@ public class GunshipAI : MonoBehaviour
     {
         Idle,
         Aim,
-        Shoot
+        
     }
-
     [SerializeField] private GunShipState state ;
-    [SerializeField] private Transform target;
-    [SerializeField] private float trackSpeed, delayShoot, detectRange;
+    [SerializeField] private Transform target, bulletSpawnOrigin1, bulletSpawnOrigin2, cannon1, cannon2;
+    [SerializeField] private float trackSpeed, delayShoot, detectRange, bulletSpeed;
     //[SerializeField] private float minXRot = (180 - 360), maxXRot;
+    [SerializeField] private GameObject enemyBulletPrefab;
     [SerializeField] private LayerMask targetLayer;
 
-    [SerializeField] private bool stateChange, detectTarget, aimTarget,shootTarget;
+    [SerializeField] private bool detectTarget, aimTarget,shootTarget;
     
     void Start()
     {
@@ -25,10 +25,11 @@ public class GunshipAI : MonoBehaviour
         aimTarget = false;
         shootTarget= false;
     }
-    void Update()
+    void FixedUpdate()
     {
         UpdateState();
         Detect();
+
     }
 
     void UpdateState()
@@ -37,52 +38,48 @@ public class GunshipAI : MonoBehaviour
         {
             case GunShipState.Idle:
                 delayShoot = 5;
-                aimTarget = false;
                 shootTarget = false;
-                detectTarget = false;
+                aimTarget = false;
+                Debug.Log("In idle");
                 if(detectTarget)
                 {
                     state = GunShipState.Aim;
-                    delayShoot --;
+                    
+                }
+                else
+                {
+                    state = GunShipState.Idle;
                 }
                 break;
 
             case GunShipState.Aim:
+            
                 Aim();
+                delayShoot -= Time.deltaTime;
+                shootTarget = true;
                 if(!detectTarget)
                 {
                     state = GunShipState.Idle;
+                    
+                    
                 }
-                else if(delayShoot == 0)
+                else if(delayShoot <= 0 && shootTarget)
                 {
-                    state = GunShipState.Shoot;
+                    Shoot();
                 }
                 break;
 
-            case GunShipState.Shoot:
-                Shoot();
-                break;
+            
+                
         }
     }
-    public bool Detect()
+    public void Detect()
     {
         
-        detectTarget = false;
-
-        // Check if any colliders within the sphere overlap with the target layer
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, detectRange, targetLayer);
-        
-        if (hitColliders.Length > 0)
-        {
-            Debug.Log("Detected: " + hitColliders[0].name);
-            detectTarget = true;
-            return true;
-        }
-        
-        return false;
-        
+       detectTarget = Physics.CheckSphere(transform.position,detectRange,targetLayer);
 
     }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = detectTarget ? Color.green : Color.red;
@@ -93,26 +90,31 @@ public class GunshipAI : MonoBehaviour
     {
         aimTarget = true;
         
-        Vector3 direction = target.position - transform.position; // Calculate direction to the target
+        Vector3 direction = target.position - transform.position; 
 
-        if (direction.sqrMagnitude > 0.01f) // Prevent jittering if the target is too close
+        if (direction.sqrMagnitude > 0.01f) 
         {
-            // Calculate the target rotation that looks in the direction of the target
             Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
 
-        
-
-            // Smoothly rotate the sphere towards the target
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, trackSpeed * Time.deltaTime);
         }
 
-
-
     }
-    private void Shoot()
+
+    void Shoot()
     {
-        shootTarget = true;
+        
+        
+        // for cannon1
+        var enemybullet1 = Instantiate(enemyBulletPrefab,bulletSpawnOrigin1.position,bulletSpawnOrigin1.rotation);
+        enemybullet1.GetComponent<Rigidbody>().velocity = bulletSpawnOrigin1.up * bulletSpeed;
+
+        // for cannon2
+        var enemybullet2 = Instantiate(enemyBulletPrefab, bulletSpawnOrigin2.position, bulletSpawnOrigin2.rotation);
+
+        enemybullet2.GetComponent<Rigidbody>().velocity = bulletSpawnOrigin2.up * bulletSpeed;
     }
+
 }
 
 
