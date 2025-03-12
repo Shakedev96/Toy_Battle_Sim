@@ -222,6 +222,7 @@ GameObject:
   - component: {fileID: 4373308964201827771}
   - component: {fileID: 1869860117627130613}
   - component: {fileID: 1061208283837614838}
+  - component: {fileID: 233745550010151748}
   m_Layer: 0
   m_Name: Gunner1
   m_TagString: Untagged
@@ -339,8 +340,8 @@ MonoBehaviour:
   trackSpeed: 20
   detectRange: 30
   bulletSpeed: 100
-  delayShoot: 5
-  timeBetweenShots: 0.5
+  delayShoot: 2
+  timeBetweenShots: 0.1
   enemyBulletPrefab: {fileID: 6160493530410237538, guid: f329931d5c58a41d1be048b0c0ab869a,
     type: 3}
   targetLayer:
@@ -349,9 +350,28 @@ MonoBehaviour:
   detectScript: {fileID: 7375529457550970747}
   detectTargets: 0
   fireFromFirstCannon: 1
-  Cannon1: {fileID: 380999281409702294}
-  recoil: 0.2
-  ogCannonPos: {x: 0, y: 0, z: 0}
+--- !u!95 &233745550010151748
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5428383111406116987}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fa3e2e719689b4694b6088a7802ee629, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5863089852225124509
 GameObject:
   m_ObjectHideFlags: 0

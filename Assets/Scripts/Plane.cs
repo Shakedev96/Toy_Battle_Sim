@@ -76,12 +76,29 @@ public class Plane : MonoBehaviour
 
     private void HandleInput()
     {
+        // roll = Input.GetAxis("Roll");
+        // pitch = Input.GetAxis("Pitch");
+        // yaw = Input.GetAxis("Yaw");
+
+
+        // // Handling throttlevalue and clamping it bwt 0 -100
+
+        // if (Input.GetKey(KeyCode.Space))
+        // {
+        //     _throttle += ThrottleIncrement;
+        // }
+        // else if(Input.GetKey(KeyCode.C))
+        // {
+        //     _throttle -= ThrottleIncrement;
+        // }
+
+        // _throttle = Mathf.Clamp(_throttle, 0f, 100f);
+
+
+        // new logic
         roll = Input.GetAxis("Roll");
-        pitch = Input.GetAxis("Pitch");
+        pitch = -Input.GetAxis("Pitch"); // Inverted for realistic flight control
         yaw = Input.GetAxis("Yaw");
-
-
-        // Handling throttlevalue and clamping it bwt 0 -100
 
         if (Input.GetKey(KeyCode.Space))
         {
@@ -110,22 +127,23 @@ public class Plane : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //Read from RB velocity
+        // Read from RB velocity
         AirSpeed = RB.velocity.magnitude;
 
         if (!hasCollided)
         {
-            RB.AddRelativeForce(MaxThrust * _throttle * transform.forward);
+            // Apply Forward Thrust
+            RB.AddRelativeForce(MaxThrust * (_throttle / 100f) * Vector3.forward);
 
+            // Apply Rotation Forces
             RB.AddTorque(ResponseModifier * yaw * transform.up);
-
             RB.AddTorque(pitch * ResponseModifier * transform.right);
-
             RB.AddTorque(ResponseModifier * roll * -transform.forward);
 
-            RB.AddRelativeForce(_lift * RB.velocity.magnitude * Vector3.up);
+            // Apply Lift Force based on plane orientation
+            Vector3 liftForce = transform.up * _lift * AirSpeed;
+            RB.AddForce(liftForce);
         }
-
         else
         {
             RB.velocity = Vector3.zero;
@@ -171,12 +189,6 @@ public class Plane : MonoBehaviour
 
         
     }
-
-    /* private void OnCollisionExit(Collision collision)
-    {
-        
-    } */
-
     private void UpdateHUD()
     {
         hud.text = "Throttle: " + _throttle.ToString("F0") + "%\n";
@@ -200,4 +212,30 @@ public class Plane : MonoBehaviour
         }
 
     }
+
+    /*
+    private void HandleInput()
+{
+    roll = Input.GetAxis("Roll");
+    pitch = -Input.GetAxis("Pitch"); // Inverted for realistic flight control
+    yaw = Input.GetAxis("Yaw");
+
+    if (Input.GetKey(KeyCode.Space))
+    {
+        _throttle += ThrottleIncrement;
+    }
+    else if(Input.GetKey(KeyCode.C))
+    {
+        _throttle -= ThrottleIncrement;
+    }
+
+    _throttle = Mathf.Clamp(_throttle, 0f, 100f);
+}
+
+private void FixedUpdate()
+{
+    
+}
+
+    */
 }
